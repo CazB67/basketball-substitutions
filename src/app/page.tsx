@@ -31,8 +31,9 @@ export default function Home() {
 
   // rendering components for not logged in users
   return (
-    <div className="w-full h-screen flex flex-col justify-center items-center">
-        <p className="text-2xl mb-2">Not Signed In</p>
+    <div className="w-full h-screen flex flex-col justify-center items-center gap-4">
+      <h1 className="text-2xl font-bold"> Basketball Substitutions</h1>
+        <p className="text-xl mb-2">Not Signed In</p>
         <button className="bg-blue-600 py-2 px-6 rounded-md mb-2" onClick={() => signIn('google')}>Sign in with google</button>
         <button className="bg-none border-gray-300 border py-2 px-6 rounded-md mb-2" onClick={() => signIn('github')}>Sign in with github</button>
     </div>
