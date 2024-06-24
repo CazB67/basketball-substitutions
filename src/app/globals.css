@@ -31,3 +31,56 @@ body {
     text-wrap: balance;
   }
 }
+
+.darkBG {
+  background-color: rgba(0, 0, 0, 0.2);
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: fixed;
+}
+
+.centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.modal {
+  width: 300px;
+  height: 250px;
+  background: #fafafa;
+  z-index: 10;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.04);
+}
+
+.modalHeader {
+  background: #fafafa;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  border-bottom: 1px solid rgb(206, 206, 206);
+}
+
+.heading {
+  padding: 10px;
+  font-weight: 500;
+  font-size: 18px;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.button {
+  max-width: 150px;
+  padding: 0.75rem;
+  border: none;
+  cursor: pointer;
+  background-color: rgb(7, 89, 241);
+  &:hover {
+    background-color: rgb(5, 5, 230);
+  }
+}
