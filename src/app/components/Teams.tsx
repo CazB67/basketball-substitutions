@@ -3,11 +3,15 @@ import React, { FC, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import XIcon from "./Icons/XIcon/xIcon";
 import { getRandomColor } from "app/helpers";
+import lightningHoopsImage from "@assets/lightning-hoops.jpg";
+import aztecsImage from "@assets/aztecs.jpg";
+import Image from "next/image";
 
 interface Team {
   id: string;
   team_name: string;
   players: any;
+  logo?: string;
 }
 
 export type TeamsProps = {
@@ -73,7 +77,6 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
       });
       const data = await response.json();
       if (response.ok) {
-        console.log({data, teams})
         setTeams(teams.concat(data.teams));
       } else {
         console.error("Error:", data.error);
@@ -88,7 +91,7 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
   const handleDeleteTeam = async (e: React.MouseEvent, team: Team) => {
     e.stopPropagation();
     const response = await supabase.from("teams").delete().eq("id", team.id);
-    if(response) setTeams(teams.filter(x => x.id !== team.id))
+    if (response) setTeams(teams.filter((x) => x.id !== team.id));
   };
 
   return (
@@ -104,9 +107,20 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
           <button
             onClick={() => onClick(team)}
             key={team.id}
-            className={`relative flex text-left bg-gray-400 bg-opacity-50 backdrop-blur-xl p-9 overflow-hidden relative rounded-[25px] font-mono flex-col gap-1 group transition-all duration-500 ease-linear md:text-white hover:text-gray-700 text-gray-700 ${getRandomColor()}`}
+            className={`relative flex text-left bg-gray-400 bg-opacity-50 backdrop-blur-xl p-9 overflow-hidden relative rounded-[25px] font-mono flex-col gap-1 group transition-all duration-500 ease-linear md:text-white hover:text-gray-700 text-gray-700 ${getRandomColor}`}
           >
-            <span className="flex w-full justify-between">
+            <span className="flex w-full justify-between items-center">
+              <Image
+                className={"rounded-md"}
+                width={60}
+                height={undefined}
+                src={
+                  team.team_name.toLowerCase().includes("lightning")
+                    ? lightningHoopsImage
+                    : aztecsImage
+                }
+                alt="Team Logo"
+              />
               {team.team_name}
               <XIcon
                 onClick={(e: React.MouseEvent) => handleDeleteTeam(e, team)}

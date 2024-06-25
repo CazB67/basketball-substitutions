@@ -8,6 +8,9 @@ import TeamList from "./components/TeamList";
 import Teams from "./components/Teams";
 import BackArrowIcon from "@components/Icons/BackArrowIcon/BackArrowIcon";
 import basketballImage from "./assets/ballandhoop.jpg"
+import lightningHoopsImage from "@assets/lightning-hoops.jpg";
+import aztecsImage from "@assets/aztecs.jpg";
+
 
 interface Player {
   id: string;
@@ -18,6 +21,7 @@ interface Team {
   id: string;
   team_name: string;
   players: Player[];
+  logo?: string;
 }
 
 export default function Home() {
@@ -25,28 +29,30 @@ export default function Home() {
   const { data: session } = useSession();
   const [selectedTeam, setSelectedTeam] = useState<Team[]>([]);
 
-
   // checking if sessions exists
   if (session) {
     // rendering components for logged in users
     return (
-      <div className="w-full h-screen flex flex-col justify-center items-center">
+      <div className="w-full h-screen flex flex-col justify-center items-center relative">
         {selectedTeam.length > 0 && (
           <BackArrowIcon onClick={() => setSelectedTeam([])} />
         )}
         <div className="w-20 h-20 relative mb-4">
           <Image
-            src={session.user?.image as string}
+            src={!selectedTeam?.[0]?.team_name ? session.user?.image || '' : selectedTeam[0].team_name.toLowerCase().includes("lightning")
+              ? lightningHoopsImage
+              : aztecsImage}
             fill
+           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             alt=""
             className="object-cover rounded-full"
           />
         </div>
-        <p className="text-2xl mb-2">
+        <p className={`${selectedTeam.length < 1 ? 'text-2xl mb-2' : 'hidden'}`}>
           Welcome <span className="font-bold">{session.user?.name}</span>. Signed
           In As
         </p>
-        <p className="font-bold mb-4">{session.user?.email}</p>
+        <p className={`${selectedTeam.length < 1 ? 'font-bold mb-4' : 'hidden'}`}>{session.user?.email}</p>
         {selectedTeam.length > 0 && (
           <TeamList className="" team={selectedTeam} />
         )}
@@ -71,7 +77,9 @@ export default function Home() {
       <h1 className="text-2xl font-bold">Basketball Substitutions</h1>
       <Image
         className="rounded-md"
+        priority={true}
         width="200"
+        height={undefined}
         src={basketballImage}
         alt="Basketball and hoop"
       />
