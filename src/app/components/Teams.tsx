@@ -54,8 +54,8 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
 
     // Create a JSON object with each item having a UUID
     const jsonObject = items.map((item) => ({
-      id: uuidv4(),
       name: item,
+      id: uuidv4()
     }));
 
     return jsonObject;

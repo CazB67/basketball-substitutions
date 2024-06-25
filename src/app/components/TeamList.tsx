@@ -1,9 +1,14 @@
 import { getRandomColor } from "app/helpers";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState, useRef } from "react";
 import XIcon from "./Icons/XIcon/xIcon";
 import { supabase } from "@lib/supabase/server";
 import { v4 as uuidv4 } from "uuid";
-import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "@hello-pangea/dnd";
 
 interface Player {
   id: string;
@@ -25,17 +30,50 @@ export type TeamListProps = {
 const TeamList: FC<TeamListProps> = ({ className, team }) => {
   const [currentTeam, setCurrentTeam] = useState<Team>(team[0]);
   const [newPlayer, setNewPlayer] = useState<string>("");
+  const [chosenPlayers, setChosenPlayers] = useState<Set<string>>(new Set());
+  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+  const currentBatchIndexRef = useRef(0);
+  const [countdown, setCountdown] = useState<number>(180); // Countdown in seconds
+  const countdownRef = useRef<number>(180); // Store countdown in a ref to preserve value during pause
 
   useEffect(() => {
     setCurrentTeam(team[0]);
   }, [team]);
+
+  useEffect(() => {
+    const timerInterval = setInterval(() => {
+      if (chosenPlayers.size > 0 && intervalId) {
+        setCountdown((prevCountdown) => {
+          if (prevCountdown > 0) {
+            countdownRef.current = prevCountdown - 1;
+            return prevCountdown - 1;
+          } else {
+            return prevCountdown;
+          }
+        });
+      }
+    }, 1000); // Update countdown every second
+
+    return () => {
+      clearInterval(timerInterval);
+    };
+  }, [chosenPlayers, intervalId]);
+
+  useEffect(() => {
+    if (countdown === 0) {
+      setCountdown(180);
+      countdownRef.current = 180;
+      clearInterval(intervalId!);
+      setChosenPlayers(new Set());
+      startChoosingPlayers(); // Restart choosing players
+    }
+  }, [countdown]);
 
   const deletePlayer = async (e: React.MouseEvent, playerId: string) => {
     e.stopPropagation();
     const newPlayers = currentTeam.players.filter(
       (player) => player.id !== playerId
     );
-    console.log({ team, newPlayers });
     const { data, error } = await supabase
       .from("teams")
       .update({ players: newPlayers })
@@ -49,7 +87,6 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
       name: newPlayer,
       id: uuidv4(),
     });
-    console.log({ team, newPlayers });
     const { data, error } = await supabase
       .from("teams")
       .update({ players: newPlayers })
@@ -59,7 +96,6 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
   };
 
   const updateTeam = async (copyPlayers: Player[]) => {
-   
     const { data, error } = await supabase
       .from("teams")
       .update({ players: copyPlayers })
@@ -76,11 +112,103 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
     const [reorderPlayer] = copyPlayers.splice(startIndex, 1);
     copyPlayers.splice(endIndex, 0, reorderPlayer);
     setCurrentTeam({ ...currentTeam, players: copyPlayers });
-    updateTeam(copyPlayers)
+    updateTeam(copyPlayers);
   };
 
+  const chooseNewPlayers = (
+    players: Player[],
+    batchSize: number,
+    startIndex: number
+  ): Set<string> => {
+    return players.reduce((acc, player, index) => {
+      if (acc.size < batchSize) {
+        acc.add(players[(startIndex + index) % players.length].id);
+      }
+      return acc;
+    }, new Set<string>());
+  };
+
+  const startChoosingPlayers = () => {
+    const playerCount = currentTeam.players.length;
+    if (playerCount <= 5) {
+      setChosenPlayers(new Set());
+      return;
+    }
+
+    const nonChosenCount = 5;
+    const batchSize = playerCount - nonChosenCount;
+
+    const initialChosenPlayers = chooseNewPlayers(
+      currentTeam.players,
+      batchSize,
+      currentBatchIndexRef.current
+    );
+    setChosenPlayers(initialChosenPlayers);
+    setCountdown(180); // Reset countdown when starting new batch
+    countdownRef.current = 180; // Reset the countdown ref as well
+
+    const newIntervalId = setInterval(() => {
+      currentBatchIndexRef.current =
+        (currentBatchIndexRef.current + batchSize) % playerCount;
+      const newChosenPlayers = chooseNewPlayers(
+        currentTeam.players,
+        batchSize,
+        currentBatchIndexRef.current
+      );
+      setChosenPlayers(newChosenPlayers);
+      setCountdown(180); // Reset countdown when choosing new players
+      countdownRef.current = 180; // Reset the countdown ref as well
+    }, 180000); // 3 minutes in milliseconds
+
+    setIntervalId(newIntervalId);
+  };
+
+  const stopChoosingPlayers = () => {
+    setChosenPlayers(new Set());
+    pauseChoosingPlayers();
+    currentBatchIndexRef.current = 0;
+    setCountdown(180);
+    countdownRef.current = 180;
+  };
+
+  const pauseChoosingPlayers = () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      setIntervalId(null);
+    } else restartCountdown();
+  };
+
+  const restartCountdown = () => {
+    const timerInterval = setInterval(() => {
+      if (chosenPlayers.size > 0 && intervalId) {
+        setCountdown((prevCountdown) => {
+          if (prevCountdown > 0) {
+            countdownRef.current = prevCountdown - 1;
+            return prevCountdown - 1;
+          } else {
+            return prevCountdown;
+          }
+        });
+      }
+    }, 1000);
+
+    setIntervalId(timerInterval);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [intervalId]);
+
   return (
-    <div className={className ? className : "bg-slate-50 rounded-md overflow-y-auto p-5 sm:p-10"}>
+    <div
+      className={
+        className
+          ? className
+          : "bg-slate-50 rounded-md overflow-y-auto p-5 sm:p-10"
+      }
+    >
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="players">
           {(droppableProvider) => (
@@ -98,7 +226,11 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
                   >
                     {(draggableProvider) => (
                       <li
-                        className={`text-center p-4 bg-blue-300 cursor-pointer rounded-lg ${getRandomColor()}`}
+                        className={`text-center p-4 cursor-pointer rounded-lg ${getRandomColor()} ${
+                          chosenPlayers.has(player.id)
+                            ? "bg-red-500"
+                            : "bg-blue-300"
+                        }`}
                         ref={draggableProvider.innerRef}
                         {...draggableProvider.draggableProps}
                         {...draggableProvider.dragHandleProps}
@@ -129,6 +261,34 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
         placeholder="Enter player"
         value={newPlayer}
       />
+      <div className="mt-4 flex justify-between gap-1">
+        <button
+          onClick={startChoosingPlayers}
+          className="px-4 py-2 bg-green-500 text-white rounded-md"
+        >
+          Start Choosing Players
+        </button>
+        <button
+          onClick={pauseChoosingPlayers}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md"
+        >
+          Pause
+        </button>
+        <button
+          onClick={stopChoosingPlayers}
+          className="px-4 py-2 bg-red-500 text-white rounded-md"
+        >
+          Stop and Reset
+        </button>
+      </div>
+      <div className={`${chosenPlayers.size ? "mt-4 text-center" : "hidden"}`}>
+        <p>
+          Countdown:{" "}
+          {Math.floor(countdown / 60) +
+            ":" +
+            ("0" + Math.floor(countdown % 60)).slice(-2)}
+        </p>
+      </div>
     </div>
   );
 };
