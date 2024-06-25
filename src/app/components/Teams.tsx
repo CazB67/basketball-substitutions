@@ -6,7 +6,8 @@ import { getRandomColor } from "app/helpers";
 import lightningHoopsImage from "@assets/lightning-hoops.jpg";
 import aztecsImage from "@assets/aztecs.jpg";
 import Image from "next/image";
-
+import { useSession } from "next-auth/react";
+import basketballImage from "@assets/kids-playing.png";
 interface Team {
   id: string;
   team_name: string;
@@ -22,9 +23,10 @@ export type TeamsProps = {
 
 const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
   const [showModal, setShowModal] = useState<Boolean>(false);
-  const [players, setPlayers] = useState<String>("");
-  const [teamName, setTeamName] = useState<String>("");
+  const [players, setPlayers] = useState<string>("");
+  const [teamName, setTeamName] = useState<string>("");
   const [teams, setTeams] = useState<Team[]>([]);
+  const { data: session } = useSession();
 
   const getTeams = async () => {
     const { data, error } = await supabase
@@ -73,6 +75,7 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
         body: JSON.stringify({
           team_name: teamName,
           players: jsonObject,
+          email: session?.user?.email
         }),
       });
       const data = await response.json();
@@ -95,7 +98,16 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
   };
 
   return (
-    <>
+    <div className="flex flex-col justify-center items-center">
+    <Image
+       className={`${
+        className
+          ? className :"rounded-md"}`}
+      width="200"
+      height={undefined}
+      src={basketballImage}
+      alt="Kids Playing"
+    />
       <div
         className={`${
           className
@@ -156,6 +168,7 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
               </span>
               <input
                 type="text"
+                value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
                 name="teamName"
                 className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
@@ -167,6 +180,7 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
                 Players
               </span>
               <input
+                value={players}
                 onChange={(e) => setPlayers(e.target.value)}
                 type="text"
                 name="players"
@@ -191,7 +205,7 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

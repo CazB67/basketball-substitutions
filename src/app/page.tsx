@@ -3,7 +3,7 @@
 // importing necessary functions
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image"; // Correct path
-import { useState } from "react";
+import {useState } from "react";
 import TeamList from "./components/TeamList";
 import Teams from "./components/Teams";
 import BackArrowIcon from "@components/Icons/BackArrowIcon/BackArrowIcon";
@@ -27,14 +27,12 @@ export default function Home() {
   // extracting data from usesession as session
   const { data: session } = useSession();
   const [selectedTeam, setSelectedTeam] = useState<Team[]>([]);
-
   // checking if sessions exists
   if (session) {
     // rendering components for logged in users
     return (
       <div className="w-full h-screen flex flex-col justify-start items-center relative">
         <header className="w-full flex flex-row min-h-10 p-2 bg-slate-50 mb-4 shadow-lg shadow-slate-500/50">
-        
           <div
             className={`flex ${
               selectedTeam.length < 1 ? "justify-end" : "justify-between"
@@ -49,7 +47,10 @@ export default function Home() {
             <span className="flex flex-row gap-1 items-center">
               <p className="p-2">
                 Basketball Substitutions
-               <span className="font-bold"> {selectedTeam.length < 1 ? " - Teams" : " - Players"}</span>
+                <span className="font-bold">
+                  {" "}
+                  {selectedTeam.length < 1 ? " - Teams" : " - Players"}
+                </span>
               </p>
               <Image
                 className="rounded-full w-8 h-8" // Use custom class for mobile and standard for larger screens
@@ -70,22 +71,22 @@ export default function Home() {
           </div>
         </header>
         <div className="h-full flex flex-col overflow-hidden">
-        {selectedTeam.length > 0 && (
-          <TeamList className="" team={selectedTeam} />
-        )}
-        <Teams
-          team={selectedTeam}
-          onClick={(team: Team) => setSelectedTeam([team])}
-          className={selectedTeam.length > 0 ? "hidden" : ""}
-        />
-       <div className="flex justify-center items-center p-2">
-        <button
-          className="bg-green-50 hover:bg-green-100 py-2 px-6 rounded-md"
-          onClick={() => signOut()}
-        >
-          Sign out
-        </button>
-        </div>
+          {selectedTeam.length > 0 && (
+            <TeamList className="" team={selectedTeam} />
+          )}
+          <Teams
+            team={selectedTeam}
+            onClick={(team: Team) => setSelectedTeam([team])}
+            className={selectedTeam.length > 0 ? "hidden" : ""}
+          />
+          <div className="flex justify-center items-center p-2">
+            <button
+              className="bg-green-50 hover:bg-green-100 py-2 px-6 rounded-md"
+              onClick={() => signOut()}
+            >
+              Sign out
+            </button>
+          </div>
         </div>
       </div>
     );
