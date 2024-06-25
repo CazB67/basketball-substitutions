@@ -100,26 +100,22 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
         className={`${
           className
             ? className
-            : "grid wide:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4 w-full max-w-wide px-5 py-5"
+            : "grid wide:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4 w-full max-w-wide p-4 overflow-y-auto"
         }`}
       >
         {teams.map((team) => (
           <button
             onClick={() => onClick(team)}
             key={team.id}
-            className={`relative flex text-left bg-gray-400 bg-opacity-50 backdrop-blur-xl p-9 overflow-hidden relative rounded-[25px] font-mono flex-col gap-1 group transition-all duration-500 ease-linear md:text-white hover:text-gray-700 text-gray-700 ${getRandomColor}`}
+            className={`relative flex text-left bg-gray-400 bg-opacity-50 backdrop-blur-xl p-4 overflow-hidden relative rounded-[25px] font-mono flex-col justify-center items-center gap-1 group transition-all duration-500 ease-linear md:text-white hover:text-gray-700 text-gray-700 min-h-60 ${getRandomColor}`}
           >
-            <span className="flex w-full justify-between items-center">
+            <span className="flex w-full justify-between items-center gap-1">
               <Image
-                className={"rounded-md"}
-                width={60}
-                height={undefined}
-                src={
-                  team.team_name.toLowerCase().includes("lightning")
-                    ? lightningHoopsImage
-                    : aztecsImage
-                }
+                className="rounded-md w-8 sm:w-30px" // Use custom class for mobile and standard for larger screens
+                src={team.team_name.toLowerCase().includes("lightning") ? lightningHoopsImage : aztecsImage}
                 alt="Team Logo"
+                width={60} // Next.js Image component requires width and height attributes
+                height={60} // Set height same as width to maintain aspect ratio
               />
               {team.team_name}
               <XIcon
@@ -129,16 +125,21 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
           </button>
         ))}
       </div>
+      <div className={`${
+          team?.length > 0
+            ? "hidden"
+            : "flex justify-center items-center p-2"}`}>
       <button
         onClick={() => onCancelClick()}
         className={`${
           team?.length > 0
             ? "hidden"
-            : "flex text-left bg-gray-400 bg-opacity-50 backdrop-blur-xl p-9 overflow-hidden relative rounded-[25px] font-mono flex-col gap-1 group transition-all duration-500 ease-linear md:text-white hover:text-gray-700 text-gray-700 hover:bg-fuchsia-300 py-5 mb-8"
+            : "flex text-center bg-gray-400 bg-opacity-50 backdrop-blur-xl p-4 overflow-hidden relative rounded-[25px] font-mono flex-col gap-1 group transition-all duration-500 ease-linear md:text-white hover:text-gray-700 text-gray-700 hover:bg-fuchsia-300"
         }`}
       >
         Add Team
       </button>
+      </div>
       <div
         className={showModal ? "darkBG" : "hidden"}
         onClick={() => onCancelClick()}

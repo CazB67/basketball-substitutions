@@ -2,15 +2,14 @@
 
 // importing necessary functions
 import { useSession, signIn, signOut } from "next-auth/react";
-import Image from "next/image";// Correct path
+import Image from "next/image"; // Correct path
 import { useState } from "react";
 import TeamList from "./components/TeamList";
 import Teams from "./components/Teams";
 import BackArrowIcon from "@components/Icons/BackArrowIcon/BackArrowIcon";
-import basketballImage from "./assets/ballandhoop.jpg"
+import basketballImage from "./assets/kids-playing.png";
 import lightningHoopsImage from "@assets/lightning-hoops.jpg";
 import aztecsImage from "@assets/aztecs.jpg";
-
 
 interface Player {
   id: string;
@@ -33,40 +32,61 @@ export default function Home() {
   if (session) {
     // rendering components for logged in users
     return (
-      <div className="w-full h-screen flex flex-col justify-center items-center relative">
-        {selectedTeam.length > 0 && (
-          <BackArrowIcon onClick={() => setSelectedTeam([])} />
-        )}
-        <div className="w-20 h-20 relative mb-4">
-          <Image
-            src={!selectedTeam?.[0]?.team_name ? session.user?.image || '' : selectedTeam[0].team_name.toLowerCase().includes("lightning")
-              ? lightningHoopsImage
-              : aztecsImage}
-            fill
-           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            alt=""
-            className="object-cover rounded-full"
-          />
-        </div>
-        <p className={`${selectedTeam.length < 1 ? 'text-2xl mb-2' : 'hidden'}`}>
-          Welcome <span className="font-bold">{session.user?.name}</span>. Signed
-          In As
-        </p>
-        <p className={`${selectedTeam.length < 1 ? 'font-bold mb-4' : 'hidden'}`}>{session.user?.email}</p>
+      <div className="w-full h-screen flex flex-col justify-start items-center relative">
+        <header className="w-full flex flex-row min-h-10 p-2 bg-slate-50 mb-4 shadow-lg shadow-slate-500/50">
+        
+          <div
+            className={`flex ${
+              selectedTeam.length < 1 ? "justify-end" : "justify-between"
+            } h-full flex-row gap-1 w-full`}
+          >
+            {selectedTeam.length > 0 && (
+              <span className="flex flex-row gap-1 items-center">
+                {" "}
+                <BackArrowIcon onClick={() => setSelectedTeam([])} />
+              </span>
+            )}{" "}
+            <span className="flex flex-row gap-1 items-center">
+              <p className="p-2">
+                Basketball Substitutions
+               <span className="font-bold"> {selectedTeam.length < 1 ? " - Teams" : " - Players"}</span>
+              </p>
+              <Image
+                className="rounded-full w-8 h-8" // Use custom class for mobile and standard for larger screens
+                src={
+                  !selectedTeam?.[0]?.team_name
+                    ? session.user?.image || ""
+                    : selectedTeam[0].team_name
+                        .toLowerCase()
+                        .includes("lightning")
+                    ? lightningHoopsImage
+                    : aztecsImage
+                }
+                alt="Team Logo"
+                width={20} // Next.js Image component requires width and height attributes
+                height={20} // Set height same as width to maintain aspect ratio
+              />
+            </span>
+          </div>
+        </header>
+        <div className="h-full w-full flex flex-col overflow-hidden">
         {selectedTeam.length > 0 && (
           <TeamList className="" team={selectedTeam} />
         )}
         <Teams
-        team={selectedTeam}
+          team={selectedTeam}
           onClick={(team: Team) => setSelectedTeam([team])}
           className={selectedTeam.length > 0 ? "hidden" : ""}
         />
+       <div className="flex justify-center items-center p-2">
         <button
           className="bg-green-50 hover:bg-green-100 py-2 px-6 rounded-md"
           onClick={() => signOut()}
         >
           Sign out
         </button>
+        </div>
+        </div>
       </div>
     );
   }
@@ -83,7 +103,7 @@ export default function Home() {
         src={basketballImage}
         alt="Basketball and hoop"
       />
-      <div className="w-full h-screen flex flex-col justify-start items-center gap-4">
+      <div className="w-full flex flex-col justify-start items-center gap-4">
         <button
           className="bg-blue-200 hover:bg-blue-300 py-2 px-6 rounded-md"
           onClick={() => signIn("google")}
