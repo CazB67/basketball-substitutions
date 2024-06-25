@@ -198,7 +198,7 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
             </button>
             <button
               onClick={() => handleAdd()}
-              className="bg-lime-100 hover:bg-lime-200 w-40 h-10 rounded-lg"
+              className="bg-lime-300 hover:bg-lime-500 w-40 h-10 rounded-lg"
             >
               Add
             </button>
