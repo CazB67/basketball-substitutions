@@ -51,8 +51,8 @@ body {
 }
 
 .modal {
-  width: 300px;
-  height: 250px;
+  width: 320px;
+  height: 260px;
   background: #fafafa;
   z-index: 10;
   border-radius: 16px;

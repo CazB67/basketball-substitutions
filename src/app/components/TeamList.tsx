@@ -80,7 +80,7 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
   };
 
   return (
-    <div className={className ? className : "px-5 py-5 bg-slate-50 rounded-md overflow-y-auto"}>
+    <div className={className ? className : "bg-slate-50 rounded-md overflow-y-auto p-5 sm:p-10"}>
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="players">
           {(droppableProvider) => (

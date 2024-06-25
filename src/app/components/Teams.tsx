@@ -100,7 +100,7 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
         className={`${
           className
             ? className
-            : "grid wide:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4 w-full max-w-wide p-4 overflow-y-auto"
+            : "grid wide:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4 w-full max-w-wide p-4 sm:p-10 overflow-y-auto"
         }`}
       >
         {teams.map((team) => (
