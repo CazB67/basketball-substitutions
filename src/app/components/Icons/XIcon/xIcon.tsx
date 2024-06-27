@@ -5,7 +5,7 @@ interface XIconProps {
 const XIcon: React.FC<XIconProps> = ({ onClick }) => {
   return (
     <svg
-      className="h-6 w-6 hover:h-8 hover:w-8 fill-pink-400 hover:fill-pink-700"
+      className="h-6 w-6 hover:h-8 hover:w-8 fill-slate-500 hover:fill-slate-900"
       onClick={onClick}
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"

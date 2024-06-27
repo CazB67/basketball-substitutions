@@ -42,7 +42,7 @@ export default function Home() {
             } h-full flex-row gap-1`}
           >
             {selectedTeam.length > 0 && (
-              <span className="flex flex-row gap-1 items-center">
+              <span className="flex flex-row gap-1 items-center hover:bg-slate-200">
                 {" "}
                 <BackArrowIcon onClick={() => setSelectedTeam([])} />
               </span>
@@ -110,13 +110,13 @@ export default function Home() {
       />
       <div className="w-full flex flex-col justify-start items-center gap-4">
         <button
-          className="bg-blue-600 hover:bg-blue-900 py-2 px-6 rounded-md text-slate-50"
+           className={(status === 'unauthenticated' || status === 'loading') && signinType === 'google' ? "bg-transparent hover:bg-transparent" : "bg-blue-600 hover:bg-blue-900 py-2 px-6 rounded-md text-slate-50"}
           onClick={() => (signIn("google"), setSigninType('google'))}
         >
           {(status === 'unauthenticated' || status === 'loading') && signinType === 'google'  ? <LoadingIcon className="w-20px h-20px animate-spin"/> : 'Sign in with Google'}
         </button>
         <button
-          className="bg-slate-600 hover:bg-slate-900 py-2 px-6 rounded-md text-slate-50"
+          className={(status === 'unauthenticated' || status === 'loading') && signinType === 'github' ? "bg-transparent hover:bg-transparent" : "bg-slate-600 hover:bg-slate-900 py-2 px-6 rounded-md text-slate-50"}
           onClick={() => (signIn("github"), setSigninType('github'))}
         >
           {(status === 'unauthenticated' || status === 'loading') && signinType === 'github' ? <LoadingIcon className="w-20px h-20px animate-spin"/> : 'Sign in with Github'}
