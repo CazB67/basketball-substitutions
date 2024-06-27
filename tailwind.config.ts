@@ -15,11 +15,15 @@ const config: Config = {
       },
       width: {
         '30px': '30px', 
-        '20px': '20px',// Custom width for 30px
+        '20px': '20px',
       },
      height: {
         '30px': '30px', 
-        '20px': '20px',// Custom width for 30px
+        '20px': '20px',
+      },
+      lineHeight: {
+        '30px': '30px', 
+        '20px': '20px',
       },
       minHeight: {
         '60': '60px',
