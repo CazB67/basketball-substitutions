@@ -82,9 +82,7 @@ export default function Home() {
             onClick={(team: Team) => setSelectedTeam([team])}
             className={selectedTeam.length > 0 ? "hidden" : ""}
           />
-          
-        </div>
-        <div className="flex justify-end items-center p-2 w-full text-xs">
+           <div className="flex justify-end items-center p-2 w-full text-xs">
             <button
               className="text-slate-500"
               onClick={() => signOut()}
@@ -92,6 +90,8 @@ export default function Home() {
               Sign out
             </button>
           </div>
+        </div>
+       
       </div>
     );
   }
