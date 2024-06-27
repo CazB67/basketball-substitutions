@@ -39,7 +39,7 @@ export default function Home() {
           <div
             className={`flex ${
               selectedTeam.length < 1 ? "justify-end" : "justify-between"
-            } h-full flex-row gap-1`}
+            } h-full w-full flex-row gap-1`}
           >
             {selectedTeam.length > 0 && (
               <span className="flex flex-row gap-1 items-center hover:bg-slate-200">
