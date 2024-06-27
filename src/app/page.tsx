@@ -29,7 +29,7 @@ export default function Home() {
   const { data: session, status } = useSession();
   const [selectedTeam, setSelectedTeam] = useState<Team[]>([]);
   const [signinType, setSigninType] = useState('')
-  console.log({session, status, signinType})
+
   // checking if sessions exists
   if (session) {
     // rendering components for logged in users
