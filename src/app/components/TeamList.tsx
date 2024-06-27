@@ -224,84 +224,15 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
   }, [intervalId]);
 
   return (
-    <div
-      className={
-        className
-          ? className
-          : "bg-slate-50 rounded-md overflow-y-auto p-3 shadow-lg shadow-slate-500/50 h-full relative"
-      }
-    >
-      <div className={`${chosenPlayers.size ? "pb-3 text-center" : "hidden"}`}>
+    <div className={className ? className : "flex flex-col gap-2 p-2 h-full"}>
+      <div className={`${chosenPlayers.size ? "text-center" : "hidden"}`}>
         <button className="bg-yellow-300 shadow-lg shadow-slate-500/50 rounded-md px-5 ">
           {Math.floor(countdown / 60) +
             ":" +
             ("0" + Math.floor(countdown % 60)).slice(-2)}
         </button>
       </div>
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="players">
-          {(droppableProvider) => (
-            <ul
-              className="flex flex-col gap-2"
-              ref={droppableProvider.innerRef}
-              {...droppableProvider.droppableProps}
-            >
-              {currentTeam &&
-                currentTeam.players?.map((player, index) => (
-                  <Draggable
-                    index={index}
-                    key={player.id}
-                    draggableId={player.id}
-                  >
-                    {(draggableProvider) => (
-                      <li
-                        className={`text-center p-1.5 sm:p-4 px-3 cursor-pointer rounded-lg shadow-lg shadow-slate-500/50 ${getRandomColor()} ${
-                          chosenPlayers.has(player.id)
-                            ? "bg-red-500"
-                            : "bg-blue-300"
-                        }`}
-                        ref={draggableProvider.innerRef}
-                        {...draggableProvider.draggableProps}
-                        {...draggableProvider.dragHandleProps}
-                      >
-                        <span className="flex w-full justify-between items-center">
-                          <span className="p-1 flex justify-start w-full items-center gap-1">
-                            {player.name}
-                            <span
-                              className={`${
-                                subCount[player.id]
-                                  ? "bg-slate-100 w-20px h-20px rounded-full text-xs leading-20px"
-                                  : "hidden"
-                              }`}
-                            >
-                              {subCount[player.id]}
-                            </span>
-                          </span>
-                          <XIcon
-                            onClick={(e: React.MouseEvent) =>
-                              deletePlayer(e, player.id)
-                            }
-                          />
-                        </span>
-                      </li>
-                    )}
-                  </Draggable>
-                ))}
-              {droppableProvider.placeholder}
-            </ul>
-          )}
-        </Droppable>
-      </DragDropContext>
-      <input
-        onChange={(e) => setNewPlayer(e.target.value)}
-        onKeyDown={addPlayer}
-        type="text"
-        name="players"
-        className="mt-4 px-3 py-2 bg-white shadow-sm placeholder-slate-400 focus:outline-none block w-full rounded-md sm:text-sm focus:ring-1"
-        placeholder="Enter player"
-        value={newPlayer}
-      />
-      <div className="mt-4 flex justify-between gap-1">
+      <div className="flex flex-row justify-center items-center gap-1">
         <button
           onClick={startChoosingPlayers}
           className="px-4 py-2 bg-green-500 text-white rounded-md"
@@ -321,6 +252,78 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
           Reset
         </button>
       </div>
+
+      <div
+        className={
+          className
+            ? className
+            : "bg-slate-50 rounded-md overflow-y-auto p-3 shadow-lg shadow-slate-500/50 relative"
+        }
+      >
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="players">
+            {(droppableProvider) => (
+              <ul
+                className="flex flex-col gap-2"
+                ref={droppableProvider.innerRef}
+                {...droppableProvider.droppableProps}
+              >
+                {currentTeam &&
+                  currentTeam.players?.map((player, index) => (
+                    <Draggable
+                      index={index}
+                      key={player.id}
+                      draggableId={player.id}
+                    >
+                      {(draggableProvider) => (
+                        <li
+                          className={`text-center p-1.5 sm:p-4 px-3 cursor-pointer rounded-lg shadow-lg shadow-slate-500/50 ${getRandomColor()} ${
+                            chosenPlayers.has(player.id)
+                              ? "bg-red-500"
+                              : "bg-blue-300"
+                          }`}
+                          ref={draggableProvider.innerRef}
+                          {...draggableProvider.draggableProps}
+                          {...draggableProvider.dragHandleProps}
+                        >
+                          <span className="flex w-full justify-between items-center">
+                            <span className="p-1 flex justify-start w-full items-center gap-1">
+                              {player.name}
+                              <span
+                                className={`${
+                                  subCount[player.id]
+                                    ? "bg-slate-100 w-20px h-20px rounded-full text-xs leading-20px"
+                                    : "hidden"
+                                }`}
+                              >
+                                {subCount[player.id]}
+                              </span>
+                            </span>
+                            <XIcon
+                              onClick={(e: React.MouseEvent) =>
+                                deletePlayer(e, player.id)
+                              }
+                            />
+                          </span>
+                        </li>
+                      )}
+                    </Draggable>
+                  ))}
+                {droppableProvider.placeholder}
+              </ul>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </div>
+      <input
+        onChange={(e) => setNewPlayer(e.target.value)}
+        onKeyDown={addPlayer}
+        type="text"
+        name="players"
+        className="shadow-lg shadow-slate-500/50 mt-4 px-3 py-2 bg-white shadow-sm placeholder-slate-400 focus:outline-none block w-full rounded-md sm:text-sm focus:ring-1"
+        placeholder="Enter player/s separated by a comma"
+        value={newPlayer}
+      />
     </div>
   );
 };
