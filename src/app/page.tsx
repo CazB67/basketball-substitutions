@@ -82,15 +82,16 @@ export default function Home() {
             onClick={(team: Team) => setSelectedTeam([team])}
             className={selectedTeam.length > 0 ? "hidden" : ""}
           />
-          {/* <div className="flex justify-center items-center p-2">
+          
+        </div>
+        <div className="flex justify-end items-center p-2 w-full text-xs">
             <button
-              className="bg-green-500 hover:bg-green-700 py-2 px-6 rounded-md text-slate-50"
+              className="text-slate-500"
               onClick={() => signOut()}
             >
               Sign out
             </button>
-          </div> */}
-        </div>
+          </div>
       </div>
     );
   }
