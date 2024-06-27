@@ -10,6 +10,7 @@ import BackArrowIcon from "@components/Icons/BackArrowIcon/BackArrowIcon";
 import basketballImage from "./assets/kids-playing.png";
 import lightningHoopsImage from "@assets/lightning-hoops.jpg";
 import aztecsImage from "@assets/aztecs.jpg";
+import LoadingIcon from "@components/Icons/LoadingIcon/LoadingIcon";
 
 interface Player {
   id: string;
@@ -25,8 +26,10 @@ interface Team {
 
 export default function Home() {
   // extracting data from usesession as session
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [selectedTeam, setSelectedTeam] = useState<Team[]>([]);
+  const [signinType, setSigninType] = useState('')
+  console.log({session, status, signinType})
   // checking if sessions exists
   if (session) {
     // rendering components for logged in users
@@ -107,15 +110,15 @@ export default function Home() {
       <div className="w-full flex flex-col justify-start items-center gap-4">
         <button
           className="bg-blue-600 hover:bg-blue-900 py-2 px-6 rounded-md text-slate-50"
-          onClick={() => signIn("google")}
+          onClick={() => (signIn("google"), setSigninType('google'))}
         >
-          Sign in with Google
+          {(status === 'unauthenticated' || status === 'loading') && signinType === 'google'  ? <LoadingIcon className="w-20px h-20px animate-spin"/> : 'Sign in with Google'}
         </button>
         <button
           className="bg-slate-600 hover:bg-slate-900 py-2 px-6 rounded-md text-slate-50"
-          onClick={() => signIn("github")}
+          onClick={() => (signIn("github"), setSigninType('github'))}
         >
-          Sign in with Github
+          {(status === 'unauthenticated' || status === 'loading') && signinType === 'github' ? <LoadingIcon className="w-20px h-20px animate-spin"/> : 'Sign in with Github'}
         </button>
       </div>
     </div>

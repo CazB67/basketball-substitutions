@@ -175,7 +175,7 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
       setChosenPlayers(newChosenPlayers);
       setCountdown(180); // Reset countdown when choosing new players
       countdownRef.current = 180; // Reset the countdown ref as well
-    }, 3000); // 3 minutes in milliseconds
+    }, 180000); // 3 minutes in milliseconds
 
     setIntervalId(newIntervalId);
   };

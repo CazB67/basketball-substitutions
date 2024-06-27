@@ -8,6 +8,7 @@ import aztecsImage from "@assets/aztecs.jpg";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import basketballImage from "@assets/kids-playing.png";
+import LoadingIcon from "./Icons/LoadingIcon/LoadingIcon";
 interface Team {
   id: string;
   team_name: string;
@@ -26,6 +27,7 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
   const [players, setPlayers] = useState<string>("");
   const [teamName, setTeamName] = useState<string>("");
   const [teams, setTeams] = useState<Team[]>([]);
+  const [loading, setLoading] =useState<boolean>(false);
   const { data: session } = useSession();
 
   const getTeams = async () => {
@@ -64,10 +66,11 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
   };
 
   const handleAdd = async () => {
-    let jsonObject;
-    if (players) jsonObject = convertStringToJSON();
+    setLoading(true)
     try {
-      const response = await fetch(`/api/teams/submit`, {
+      const jsonObject = players ? convertStringToJSON() : undefined;
+  
+      const response = await fetch(`/api/teams`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -75,12 +78,14 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
         body: JSON.stringify({
           team_name: teamName,
           players: jsonObject,
-          email: session?.user?.email
+          email: session?.user?.email,
         }),
       });
+  
       const data = await response.json();
+  
       if (response.ok) {
-        setTeams(teams.concat(data.teams));
+        setTeams(prevTeams => [...prevTeams, ...data.teams]);
       } else {
         console.error("Error:", data.error);
       }
@@ -88,8 +93,10 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
       console.error("Network error:", error);
     } finally {
       onCancelClick();
+      setLoading(false)
     }
   };
+  
 
   const handleDeleteTeam = async (e: React.MouseEvent, team: Team) => {
     e.stopPropagation();
@@ -198,9 +205,9 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
             </button>
             <button
               onClick={() => handleAdd()}
-              className="bg-lime-300 hover:bg-lime-500 w-40 h-10 rounded-lg"
+              className="bg-lime-300 hover:bg-lime-500 w-40 h-10 rounded-lg flex items-center justify-center"
             >
-              Add
+              {!loading ? 'Add' : <LoadingIcon className="w-20px h-20px animate-spin"/>}
             </button>
           </div>
         </div>
