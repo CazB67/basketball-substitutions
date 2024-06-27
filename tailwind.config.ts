@@ -17,6 +17,10 @@ const config: Config = {
         '30px': '30px', 
         '20px': '20px',// Custom width for 30px
       },
+     height: {
+        '30px': '30px', 
+        '20px': '20px',// Custom width for 30px
+      },
       minHeight: {
         '60': '60px',
       },

@@ -15,6 +15,10 @@ interface Player {
   name: string;
 }
 
+interface SubbedCount {
+  [id: string]: number;
+}
+
 interface Team {
   id: string;
   team_name: string;
@@ -31,6 +35,7 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
   const [currentTeam, setCurrentTeam] = useState<Team>(team[0]);
   const [newPlayer, setNewPlayer] = useState<string>("");
   const [chosenPlayers, setChosenPlayers] = useState<Set<string>>(new Set());
+  const [subCount, setSubCount] = useState<SubbedCount>({});
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
   const currentBatchIndexRef = useRef(0);
   const [countdown, setCountdown] = useState<number>(180); // Countdown in seconds
@@ -121,11 +126,24 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
     startIndex: number
   ): Set<string> => {
     return players.reduce((acc, player, index) => {
-      if (acc.size < batchSize) {
-        acc.add(players[(startIndex + index) % players.length].id);
+      if (acc.size < batchSize && player) {
+        const playerId = players[(startIndex + index) % players.length].id;
+        acc.add(playerId);
+        updateSubCount(playerId);
       }
       return acc;
     }, new Set<string>());
+  };
+
+  const updateSubCount = (id: string) => {
+    setSubCount((prevSubCount) => {
+      const existingEntry = prevSubCount[id];
+      if (existingEntry) {
+        return { ...prevSubCount, [id]: existingEntry + 1 };
+      } else {
+        return { ...prevSubCount, [id]: 1 };
+      }
+    });
   };
 
   const startChoosingPlayers = () => {
@@ -137,7 +155,6 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
 
     const nonChosenCount = 5;
     const batchSize = playerCount - nonChosenCount;
-
     const initialChosenPlayers = chooseNewPlayers(
       currentTeam.players,
       batchSize,
@@ -158,7 +175,7 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
       setChosenPlayers(newChosenPlayers);
       setCountdown(180); // Reset countdown when choosing new players
       countdownRef.current = 180; // Reset the countdown ref as well
-    }, 180000); // 3 minutes in milliseconds
+    }, 3000); // 3 minutes in milliseconds
 
     setIntervalId(newIntervalId);
   };
@@ -168,6 +185,7 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
     pauseChoosingPlayers();
     currentBatchIndexRef.current = 0;
     setCountdown(180);
+    setSubCount({})
     countdownRef.current = 180;
   };
 
@@ -236,7 +254,7 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
                         {...draggableProvider.dragHandleProps}
                       >
                         <span className="flex w-full justify-between">
-                          {player.name}
+                          <span className="p-1 flex justify-start w-full items-center gap-1">{player.name}<span className={`${subCount[player.id] ? 'bg-slate-100 p-1 w-30px h-30px rounded-full' : 'hidden'}`}>{subCount[player.id]}</span></span>
                           <XIcon
                             onClick={(e: React.MouseEvent) =>
                               deletePlayer(e, player.id)
