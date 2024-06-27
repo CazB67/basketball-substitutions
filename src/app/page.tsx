@@ -39,7 +39,7 @@ export default function Home() {
           <div
             className={`flex ${
               selectedTeam.length < 1 ? "justify-end" : "justify-between"
-            } h-full flex-row gap-1 w-full`}
+            } h-full flex-row gap-1`}
           >
             {selectedTeam.length > 0 && (
               <span className="flex flex-row gap-1 items-center">
@@ -73,7 +73,7 @@ export default function Home() {
             </span>
           </div>
         </header>
-        <div className="h-full w-full flex flex-col overflow-hidden">
+        <div className="h-full flex flex-col overflow-hidden sm:min-w-80 min-w-full">
           {selectedTeam.length > 0 && (
             <TeamList className="" team={selectedTeam} />
           )}
