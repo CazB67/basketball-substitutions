@@ -75,7 +75,7 @@ export default function Home() {
         </header>
         <div className="h-full flex flex-col overflow-hidden sm:min-w-80 min-w-full">
           {selectedTeam.length > 0 && (
-            <TeamList className="" team={selectedTeam} />
+            <TeamList className={selectedTeam?.[0].players?.length > 0 ? "" : 'hidden'} team={selectedTeam} />
           )}
           <Teams
             team={selectedTeam}

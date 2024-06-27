@@ -96,8 +96,9 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
     const { data, error } = await supabase
       .from("teams")
       .update({ players: newPlayers })
-      .eq("id", currentTeam.id);
-    if (!error) setCurrentTeam({ ...currentTeam, players: newPlayers });
+      .eq("id", currentTeam.id)
+      .select("*")
+    if (!error) setCurrentTeam(data[0]);
     setNewPlayer("");
   };
 
@@ -222,17 +223,17 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
       if (intervalId) clearInterval(intervalId);
     };
   }, [intervalId]);
-
+console.log({currentTeam})
   return (
-    <div className={className ? className : "flex flex-col gap-2 p-2 h-full"}>
-      <div className={`${chosenPlayers.size ? "text-center" : "hidden"}`}>
+    <div className="flex flex-col gap-2 p-2 h-full">
+      <div className={`${!chosenPlayers.size || className ? "hidden" : "text-center"}`}>
         <button className="bg-yellow-300 shadow-lg shadow-slate-500/50 rounded-md px-5 ">
           {Math.floor(countdown / 60) +
             ":" +
             ("0" + Math.floor(countdown % 60)).slice(-2)}
         </button>
       </div>
-      <div className="flex flex-row justify-center items-center gap-1">
+      <div className={className ? className : "flex flex-row justify-center items-center gap-1"}>
         <button
           onClick={startChoosingPlayers}
           className="px-4 py-2 bg-green-500 text-white rounded-md"
@@ -254,17 +255,17 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
       </div>
 
       <div
-        className={
-          className
-            ? className
-            : "bg-slate-50 rounded-md overflow-y-auto p-3 shadow-lg shadow-slate-500/50 relative"
-        }
+        className={currentTeam?.players?.length < 1 ? className : "bg-slate-50 rounded-md overflow-y-auto p-3 shadow-lg shadow-slate-500/50 relative"}
       >
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="players">
             {(droppableProvider) => (
               <ul
-                className="flex flex-col gap-2"
+                className={
+                  currentTeam?.players?.length < 1
+                    ? className
+                    : "flex flex-col gap-2"
+                }
                 ref={droppableProvider.innerRef}
                 {...droppableProvider.droppableProps}
               >
@@ -321,7 +322,7 @@ const TeamList: FC<TeamListProps> = ({ className, team }) => {
         type="text"
         name="players"
         className="shadow-lg shadow-slate-500/50 mt-4 px-3 py-2 bg-white shadow-sm placeholder-slate-400 focus:outline-none block w-full rounded-md sm:text-sm focus:ring-1"
-        placeholder="Enter player/s separated by a comma"
+        placeholder="Enter player"
         value={newPlayer}
       />
     </div>
