@@ -84,3 +84,9 @@ body {
     background-color: rgb(5, 5, 230);
   }
 }
+
+button, p,
+[role="button"] {
+  color: rgb(15 23 42);
+}
+  
