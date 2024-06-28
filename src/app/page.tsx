@@ -3,7 +3,7 @@
 // importing necessary functions
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image"; // Correct path
-import {useState } from "react";
+import { useState } from "react";
 import TeamList from "./components/TeamList";
 import Teams from "./components/Teams";
 import BackArrowIcon from "@components/Icons/BackArrowIcon/BackArrowIcon";
@@ -28,13 +28,14 @@ export default function Home() {
   // extracting data from usesession as session
   const { data: session, status } = useSession();
   const [selectedTeam, setSelectedTeam] = useState<Team[]>([]);
-  const [signinType, setSigninType] = useState('')
+  const [signinType, setSigninType] = useState<string>("");
+  const [showDropdown, setShowDropdown] =useState<boolean>(false)
 
   // checking if sessions exists
   if (session) {
     // rendering components for logged in users
     return (
-      <div className="w-full h-screen flex flex-col justify-start items-center relative">
+      <div className="w-full h-screen flex flex-col justify-start items-center relative" onClick={() => setShowDropdown(false)}>
         <header className="w-full flex flex-row min-h-10 p-2 bg-slate-50 mb-4 shadow-lg shadow-slate-500/50">
           <div
             className={`flex ${
@@ -56,7 +57,8 @@ export default function Home() {
                 </span>
               </p>
               <Image
-                className="rounded-full w-8 h-8" // Use custom class for mobile and standard for larger screens
+                className="rounded-full w-8 h-8 relative cursor-pointer" // Use custom class for mobile and standard for larger screens
+                onClick={(e) => (e.stopPropagation(), setShowDropdown(!showDropdown))}
                 src={
                   !selectedTeam?.[0]?.team_name
                     ? session.user?.image || ""
@@ -72,17 +74,33 @@ export default function Home() {
               />
             </span>
           </div>
+          <div className={showDropdown ? "absolute right-0 top-14 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in" : 'hidden'}>
+          <div className="py-1">
+            <div>
+              <button
+                onClick={() => (setShowDropdown(!showDropdown),signOut())}
+                className="block w-full px-4 py-2 text-left text-sm hover:bg-slate-100"
+              >
+                Sign out
+              </button>
+            </div>
+          </div>
+        </div>
         </header>
-        <div className="flex flex-col overflow-hidden sm:min-w-80 min-w-full">
+       
+        <div className="flex flex-col overflow-hidden sm:min-w-80 min-w-full" >
           {selectedTeam.length > 0 && (
-            <TeamList className={selectedTeam?.[0].players?.length > 0 ? "" : 'hidden'} team={selectedTeam} />
+            <TeamList
+              className={selectedTeam?.[0].players?.length > 0 ? "" : "hidden"}
+              team={selectedTeam}
+            />
           )}
           <Teams
             team={selectedTeam}
             onClick={(team: Team) => setSelectedTeam([team])}
             className={selectedTeam.length > 0 ? "hidden" : ""}
           />
-           <div className="flex justify-end items-center p-2 w-full text-xs">
+          <div className="flex justify-end items-center p-2 w-full text-xs">
             <button
               className="text-slate-500 hover:font-bold"
               onClick={() => signOut()}
@@ -91,7 +109,6 @@ export default function Home() {
             </button>
           </div>
         </div>
-       
       </div>
     );
   }
@@ -110,16 +127,36 @@ export default function Home() {
       />
       <div className="w-full flex flex-col justify-start items-center gap-4">
         <button
-           className={(status === 'unauthenticated' || status === 'loading') && signinType === 'google' ? "bg-transparent hover:bg-transparent text-slate-900 dark:text-slate-50" : "bg-blue-600 hover:bg-blue-900 py-2 px-6 rounded-md text-slate-50"}
-          onClick={() => (signIn("google"), setSigninType('google'))}
+          className={
+            (status === "unauthenticated" || status === "loading") &&
+            signinType === "google"
+              ? "bg-transparent hover:bg-transparent text-slate-900 dark:text-slate-50"
+              : "bg-blue-600 hover:bg-blue-900 py-2 px-6 rounded-md text-slate-50"
+          }
+          onClick={() => (signIn("google"), setSigninType("google"))}
         >
-          {(status === 'unauthenticated' || status === 'loading') && signinType === 'google'  ? <LoadingIcon className="w-20px h-20px animate-spin"/> : 'Sign in with Google'}
+          {(status === "unauthenticated" || status === "loading") &&
+          signinType === "google" ? (
+            <LoadingIcon className="w-20px h-20px animate-spin" />
+          ) : (
+            "Sign in with Google"
+          )}
         </button>
         <button
-          className={(status === 'unauthenticated' || status === 'loading') && signinType === 'github' ? "bg-transparent hover:bg-transparent text-slate-900 dark:text-white" : "bg-slate-600 hover:bg-slate-900 py-2 px-6 rounded-md text-slate-50"}
-          onClick={() => (signIn("github"), setSigninType('github'))}
+          className={
+            (status === "unauthenticated" || status === "loading") &&
+            signinType === "github"
+              ? "bg-transparent hover:bg-transparent text-slate-900 dark:text-white"
+              : "bg-slate-600 hover:bg-slate-900 py-2 px-6 rounded-md text-slate-50"
+          }
+          onClick={() => (signIn("github"), setSigninType("github"))}
         >
-          {(status === 'unauthenticated' || status === 'loading') && signinType === 'github' ? <LoadingIcon className="w-20px h-20px animate-spin"/> : 'Sign in with Github'}
+          {(status === "unauthenticated" || status === "loading") &&
+          signinType === "github" ? (
+            <LoadingIcon className="w-20px h-20px animate-spin" />
+          ) : (
+            "Sign in with Github"
+          )}
         </button>
       </div>
     </div>
