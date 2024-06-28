@@ -126,7 +126,7 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
           <button
             onClick={() => onClick(team)}
             key={team.id}
-            className={`relative flex text-left bg-gray-400 bg-opacity-50 backdrop-blur-xl p-4 overflow-hidden relative rounded-[25px] font-mono flex-col justify-center items-center gap-1 group transition-all duration-500 ease-linear md:text-white hover:text-gray-700 text-gray-700 min-h-60 ${getRandomColor}`}
+            className={`text-center p-1.5 bg-blue-300 sm:p-4 hover:font-bold px-3 cursor-pointer rounded-lg shadow-lg shadow-slate-500/50 ${getRandomColor()}`}
           >
             <span className="flex w-full justify-between items-center gap-1">
               <Image
@@ -153,7 +153,7 @@ const Teams: FC<TeamsProps> = ({ onClick, className, team }) => {
         className={`${
           team?.length > 0
             ? "hidden"
-            : "flex text-center bg-gray-400 bg-opacity-50 backdrop-blur-xl p-4 overflow-hidden relative rounded-[25px] font-mono flex-col gap-1 group transition-all duration-500 ease-linear md:text-white hover:text-gray-700 text-gray-700 hover:bg-fuchsia-300"
+            : `text-center p-1.5 bg-blue-300 sm:p-4 hover:font-bold px-3 cursor-pointer rounded-lg shadow-lg shadow-slate-500/50 ${getRandomColor()}`
         }`}
       >
         Add Team

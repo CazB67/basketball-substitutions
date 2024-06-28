@@ -84,7 +84,7 @@ export default function Home() {
           />
            <div className="flex justify-end items-center p-2 w-full text-xs">
             <button
-              className="text-slate-500"
+              className="text-slate-500 hover:font-bold"
               onClick={() => signOut()}
             >
               Sign out
@@ -110,13 +110,13 @@ export default function Home() {
       />
       <div className="w-full flex flex-col justify-start items-center gap-4">
         <button
-           className={(status === 'unauthenticated' || status === 'loading') && signinType === 'google' ? "bg-transparent hover:bg-transparent" : "bg-blue-600 hover:bg-blue-900 py-2 px-6 rounded-md text-slate-50"}
+           className={(status === 'unauthenticated' || status === 'loading') && signinType === 'google' ? "bg-transparent hover:bg-transparent text-slate-900 dark:text-slate-50" : "bg-blue-600 hover:bg-blue-900 py-2 px-6 rounded-md text-slate-50"}
           onClick={() => (signIn("google"), setSigninType('google'))}
         >
           {(status === 'unauthenticated' || status === 'loading') && signinType === 'google'  ? <LoadingIcon className="w-20px h-20px animate-spin"/> : 'Sign in with Google'}
         </button>
         <button
-          className={(status === 'unauthenticated' || status === 'loading') && signinType === 'github' ? "bg-transparent hover:bg-transparent" : "bg-slate-600 hover:bg-slate-900 py-2 px-6 rounded-md text-slate-50"}
+          className={(status === 'unauthenticated' || status === 'loading') && signinType === 'github' ? "bg-transparent hover:bg-transparent text-slate-900 dark:text-white" : "bg-slate-600 hover:bg-slate-900 py-2 px-6 rounded-md text-slate-50"}
           onClick={() => (signIn("github"), setSigninType('github'))}
         >
           {(status === 'unauthenticated' || status === 'loading') && signinType === 'github' ? <LoadingIcon className="w-20px h-20px animate-spin"/> : 'Sign in with Github'}

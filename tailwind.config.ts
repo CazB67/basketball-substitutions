@@ -30,7 +30,7 @@ const config: Config = {
       },
       maxHeight: {
         '60': '60px',
-      }
+      }, 
     },
   },
   variants: {
